@@ -1,0 +1,152 @@
+# ~/.tmux.conf.local — oh-my-tmux local overrides
+# This file is sourced by oh-my-tmux's base .tmux.conf
+# Reference: https://github.com/gpakosz/.tmux
+
+# ── Terminal & True Color ─────────────────────────────────────────────────────
+# Override oh-my-tmux default (screen-256color) with tmux-256color for better
+# feature support. The terminal-overrides line enables 24-bit RGB through tmux.
+set -g default-terminal "tmux-256color"
+set -ga terminal-overrides ",xterm-256color:RGB"
+set -ga terminal-overrides ",xterm-256color:Tc"
+# Cursor shape passthrough (bar in insert, block in normal)
+set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+
+# ── Theme — Tokyo Night ───────────────────────────────────────────────────────
+# oh-my-tmux colour role mappings:
+#   status LEFT  — fg: 6/7/8 on bg: 9/10/11  (3 segments, left to right)
+#   status RIGHT — fg: 12/13/14 on bg: 15/16/17 (3 segments, right to left)
+#   active window tab: colour_1 fg on colour_4 bg
+#
+# Contrast rule: coloured accent bg → dark (#1a1b26) fg
+#                dark bg           → light (#c0caf5) fg
+tmux_conf_theme_colour_1='#1a1b26'   # dark navy (base bg)
+tmux_conf_theme_colour_2='#24283b'   # dark surface
+tmux_conf_theme_colour_3='#414868'   # medium surface
+tmux_conf_theme_colour_4='#7aa2f7'   # blue (active window tab bg)
+tmux_conf_theme_colour_5='#ff9e64'   # orange accent
+tmux_conf_theme_colour_6='#1a1b26'   # left seg1 fg → dark on orange bg ✓
+tmux_conf_theme_colour_7='#1a1b26'   # left seg2 fg → dark on green bg ✓
+tmux_conf_theme_colour_8='#1a1b26'   # left seg3 fg → dark on cyan bg ✓
+tmux_conf_theme_colour_9='#ff9e64'   # left seg1 bg → orange
+tmux_conf_theme_colour_10='#9ece6a'  # left seg2 bg → green
+tmux_conf_theme_colour_11='#7dcfff'  # left seg3 bg → cyan
+tmux_conf_theme_colour_12='#c0caf5'  # right seg1 fg → light on dark bg ✓
+tmux_conf_theme_colour_13='#1a1b26'  # right seg2 fg → dark on pink bg ✓
+tmux_conf_theme_colour_14='#c0caf5'  # right seg3 fg → light on dark bg ✓
+tmux_conf_theme_colour_15='#1a1b26'  # right seg1 bg → dark navy
+tmux_conf_theme_colour_16='#f7768e'  # right seg2 bg → pink/red accent
+tmux_conf_theme_colour_17='#24283b'  # right seg3 bg → dark surface
+
+# 24-bit colour support in theme
+tmux_conf_theme_24b_colour=true
+
+# ── Powerline Separators (Nerd Font) ─────────────────────────────────────────
+tmux_conf_theme_left_separator_main=''
+tmux_conf_theme_left_separator_sub=''
+tmux_conf_theme_right_separator_main=''
+tmux_conf_theme_right_separator_sub=''
+
+# ── Status Bar ────────────────────────────────────────────────────────────────
+# Left: session name + uptime
+tmux_conf_theme_status_left=' ❐ #S | ↑#{?uptime_y, #{uptime_y}y,}#{?uptime_d, #{uptime_d}d,}#{?uptime_h, #{uptime_h}h,}#{?uptime_m, #{uptime_m}m,} '
+
+# Right: CPU% | RAM% | battery | time | date
+# #{cpu_percentage} and #{ram_percentage} come from tmux-plugins/tmux-cpu
+tmux_conf_theme_status_right=' #{?mouse, M ,   }  #{cpu_percentage} CPU  #{ram_percentage} RAM  #{battery_icon}#{battery_percentage}  #($HOME/.local/bin/tmux-ip)  %R  %d %b '
+
+# Window list format (inactive / active)
+tmux_conf_theme_window_status_format='#I #W#{?window_bell_flag, 🔔,}#{?window_zoomed_flag, 🔍,}'
+tmux_conf_theme_window_status_current_format='#I #W#{?window_zoomed_flag, 🔍,}'
+
+# Status bar position
+tmux_conf_theme_status_position=bottom
+
+# Pane borders
+tmux_conf_theme_pane_border_style=thin
+
+# ── Behaviour ─────────────────────────────────────────────────────────────────
+# New panes open in the current directory; new windows open in home
+tmux_conf_new_window_retain_current_path=false
+tmux_conf_new_pane_retain_current_path=true
+
+# Copy to macOS clipboard automatically
+tmux_conf_copy_to_os_clipboard=true
+
+# Don't ask for session name when creating a new session
+tmux_conf_new_session_prompt=false
+
+# Scrollback buffer
+set -g history-limit 50000
+
+# ── Plugins (TPM) ─────────────────────────────────────────────────────────────
+# /!\ do NOT add 'tmux-plugins/tpm' here — oh-my-tmux bootstraps TPM itself
+# /!\ do NOT add the 'run tpm' line — oh-my-tmux handles that too
+
+# Sane defaults
+set -g @plugin 'tmux-plugins/tmux-sensible'
+
+# System clipboard integration (pbcopy on macOS, xclip/xsel on Linux)
+set -g @plugin 'tmux-plugins/tmux-yank'
+
+# CPU/RAM/GPU usage in status bar — replaces cmake-based tmux-mem-cpu-load
+set -g @plugin 'tmux-plugins/tmux-cpu'
+
+# Session persistence across reboots
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
+
+# Seamless ctrl+h/j/k/l navigation across tmux panes and nvim splits
+set -g @plugin 'christoomey/vim-tmux-navigator'
+
+# Fuzzy extract text, paths, URLs from pane content (prefix + Tab)
+set -g @plugin 'laktak/extrakto'
+
+# Menu system (prefix + \)
+set -g @plugin 'jaclu/tmux-menus'
+
+# FZF-powered session/directory switcher (prefix + T)
+set -g @plugin 'joshmedeski/t-smart-tmux-session-manager'
+
+# ── Plugin Configuration ──────────────────────────────────────────────────────
+
+# tmux-continuum: auto-save every 15 min, auto-restore on server start
+set -g @continuum-restore 'on'
+set -g @continuum-save-interval '15'
+
+# tmux-resurrect: also save/restore pane contents and nvim sessions
+set -g @resurrect-capture-pane-contents 'on'
+set -g @resurrect-strategy-nvim 'session'
+
+# extrakto
+set -g @extrakto_key 'tab'
+set -g @extrakto_clip_tool 'pbcopy'
+set -g @extrakto_fzf_tool 'fzf'
+
+# t-smart-tmux-session-manager
+set -g @t-bind 'T'
+set -g @t-fzf-prompt '  '
+
+# ── Extra Key Bindings ────────────────────────────────────────────────────────
+# Reload config
+bind r source-file ~/.tmux.conf \; display '~/.tmux.conf reloaded'
+
+# Ctrl+L is intercepted by vim-tmux-navigator for pane navigation.
+# prefix + Ctrl+L sends clear-screen to the active pane instead.
+bind C-l send-keys C-l
+
+# Splits that feel natural (| for vertical split, - for horizontal)
+bind | split-window -h -c '#{pane_current_path}'
+bind - split-window -v -c '#{pane_current_path}'
+
+# Resize panes with H/J/K/L (prefix + shift+hjkl)
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+# Fast window switching with alt+number (no prefix needed)
+bind -n M-1 select-window -t 1
+bind -n M-2 select-window -t 2
+bind -n M-3 select-window -t 3
+bind -n M-4 select-window -t 4
+bind -n M-5 select-window -t 5

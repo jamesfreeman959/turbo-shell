@@ -1,0 +1,48 @@
+# atuin configuration
+# Docs: https://docs.atuin.sh/configuration/config/
+
+## ── Sync ─────────────────────────────────────────────────────────────────────
+# Self-hosted server. Set this URL after running your atuin server instance.
+# Docker setup: https://docs.atuin.sh/self-hosting/docker/
+#
+# After setting the URL, run:
+#   atuin register -u <username> -e <email>   # first time
+#   atuin login -u <username>                 # subsequent machines
+#   atuin sync                                # force a sync
+#
+[network]
+sync_address = "https://ATUIN_SERVER_URL_PLACEHOLDER"
+
+[sync]
+records = true
+
+## ── History behaviour ────────────────────────────────────────────────────────
+[history]
+# "global" = search all machines' history
+# "session" = search only current session history
+# "directory" = search history from current directory
+filter_mode = "global"
+
+# Use session filter when navigating with up-arrow (less surprising),
+# but global filter when explicitly opening the search UI (ctrl+r)
+filter_mode_shell_up_key_binding = "session"
+
+# Don't store commands that start with a space (matches your zsh hist_ignore_space)
+# Atuin respects the shell's HISTIGNORE — this is belt-and-braces
+# filter_mode doesn't affect this; it's about what gets stored at all.
+
+## ── Search UI ────────────────────────────────────────────────────────────────
+[search]
+# Show extra context (exit code, duration, directory) in search results
+search_mode = "fuzzy"
+
+## ── Display ──────────────────────────────────────────────────────────────────
+[stats]
+# Commands to ignore in 'atuin stats' output
+common_prefix = ["sudo"]
+common_subcommands = ["cargo", "go", "git", "npm", "yarn", "bun"]
+
+## ── Keymap ───────────────────────────────────────────────────────────────────
+# "emacs" or "vim" — emacs is less surprising for shell users
+[keymap]
+shell_up_key_binding = true  # ctrl+r opens atuin; up-arrow still searches too

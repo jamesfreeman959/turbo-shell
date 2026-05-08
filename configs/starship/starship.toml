@@ -1,0 +1,131 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Add a blank line before each prompt — breathing room in busy terminals
+add_newline = true
+
+# 500ms max wait for any module — critical for Mosh sessions where slow
+# external calls make the prompt feel laggy
+command_timeout = 500
+
+# ── Prompt layout ─────────────────────────────────────────────────────────────
+# Line 1: context + directory + git + languages + duration | time (right-aligned)
+# Line 2: status symbol + input
+format = """
+$os$username$hostname$directory$git_branch$git_status$python$nodejs$rust$golang$cmd_duration$fill$time
+$status$character"""
+
+# ── OS icon ───────────────────────────────────────────────────────────────────
+[os]
+format = "[$symbol](bold white) "
+disabled = false
+
+[os.symbols]
+Macos = ""
+Linux = ""
+Windows = ""
+
+# ── User — only shown when non-default or root ────────────────────────────────
+[username]
+style_user   = "bold #7aa2f7"
+style_root   = "bold #f7768e"
+format       = "[$user]($style)@"
+show_always  = false
+
+# ── Hostname — always shown (useful when connecting via Mosh) ─────────────────
+[hostname]
+ssh_only  = false
+format    = "[$hostname](bold #9ece6a) "
+disabled  = false
+
+# ── Directory ─────────────────────────────────────────────────────────────────
+[directory]
+format            = "in [$path](bold #7dcfff)[$read_only](bold #f7768e) "
+truncation_length = 4
+truncate_to_repo  = true
+read_only         = "  "
+
+[directory.substitutions]
+"~/Development" = " dev"
+"~/Documents"   = " docs"
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+[git_branch]
+format = "[$symbol$branch](bold #e0af68) "
+symbol = " "
+
+[git_status]
+format     = "([$all_status$ahead_behind]($style) )"
+style      = "bold #f7768e"
+conflicted = "≠"
+ahead      = "⇡${count}"
+behind     = "⇣${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked  = "?${count}"
+stashed    = "\\$${count}"
+modified   = "!${count}"
+staged     = "+${count}"
+renamed    = "»${count}"
+deleted    = "✘${count}"
+
+# ── Languages — shown only when in a relevant project ─────────────────────────
+[python]
+format         = "[$symbol$version(\\($virtualenv\\))](bold #e0af68) "
+symbol         = " "
+detect_files   = ["requirements.txt", "pyproject.toml", ".python-version", "Pipfile"]
+
+[nodejs]
+format       = "[$symbol$version](bold #9ece6a) "
+symbol       = " "
+detect_files = ["package.json"]
+
+[rust]
+format       = "[$symbol$version](bold #ff9e64) "
+symbol       = " "
+
+[golang]
+format       = "[$symbol$version](bold #7dcfff) "
+symbol       = " "
+
+# ── Command duration — shown when a command takes > 2s ────────────────────────
+[cmd_duration]
+min_time           = 2_000
+format             = "took [$duration](bold yellow) "
+show_milliseconds  = false
+
+# ── Fill — pushes $time to the right edge ────────────────────────────────────
+[fill]
+symbol = " "
+
+# ── Time (right-aligned via fill) ─────────────────────────────────────────────
+[time]
+format   = "[$time](dimmed #565f89) "
+time_format = "%H:%M"
+disabled = false
+
+# ── Status (exit code) ────────────────────────────────────────────────────────
+[status]
+format          = "[$symbol$status]($style) "
+symbol          = "✗ "
+success_symbol  = ""
+style           = "bold #f7768e"
+disabled        = false
+
+# ── Prompt character ──────────────────────────────────────────────────────────
+[character]
+success_symbol   = "[❯](bold #9ece6a)"
+error_symbol     = "[❯](bold #f7768e)"
+vimcmd_symbol    = "[❮](bold #9d7cd8)"    # shown when in nvim normal mode (shell)
+
+# ── Disabled noisy modules ────────────────────────────────────────────────────
+[package]
+disabled = true  # package.json version is almost never what you want here
+
+[aws]
+disabled = true  # enable if you use AWS CLI regularly
+
+[gcloud]
+disabled = false
+format   = "on [☁ $account](bold #7aa2f7) "
+
+[docker_context]
+disabled = true  # too noisy; enable if you work with Docker frequently

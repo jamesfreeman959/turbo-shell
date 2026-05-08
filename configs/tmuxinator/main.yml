@@ -1,0 +1,26 @@
+# tmuxinator template: main development session
+# Usage: tmuxinator start main
+# Usage with different root: tmuxinator start main root=~/Development/my-project
+#
+# Docs: https://github.com/tmuxinator/tmuxinator
+
+name: main
+root: ~
+
+windows:
+  # Window 1 — Editor: nvim on the left, shell on the right
+  - editor:
+      layout: main-vertical   # 60% left pane, 40% right pane
+      panes:
+        - nvim .
+        - ""                  # empty shell in project root
+
+  # Window 2 — General shell
+  - shell: ""
+
+  # Window 3 — Ops: lazygit + system monitor side by side
+  - ops:
+      layout: even-horizontal
+      panes:
+        - lazygit
+        - btop

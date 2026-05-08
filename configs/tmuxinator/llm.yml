@@ -1,0 +1,24 @@
+# tmuxinator template: LLM / AI work session
+# Usage: tmuxinator start llm
+# Usage in a specific project: tmuxinator start llm root=~/Development/my-project
+#
+# The claude window is where you run `claude` (Claude Code CLI).
+# The scratch window is for running code, testing outputs, etc.
+
+name: llm
+root: ~/
+
+windows:
+  # Window 1 — Claude Code: full-width agent on left, shell for running output on right
+  - claude:
+      layout: main-vertical
+      panes:
+        - claude
+        - ""
+
+  # Window 2 — Scratch: open editor + shell for experimenting
+  - scratch:
+      layout: main-vertical
+      panes:
+        - nvim .
+        - ""

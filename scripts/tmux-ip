@@ -1,0 +1,23 @@
+#!/bin/sh
+# tmux-ip — print external IPv4 for the tmux status bar
+# Caches the result for 5 minutes so the status bar stays fast.
+
+CACHE="$HOME/.cache/tmux-ip"
+
+# Return cached value if it exists and is less than 5 minutes old
+if [ -f "$CACHE" ] && find "$CACHE" -mmin -5 | grep -q .; then
+    cat "$CACHE"
+    exit 0
+fi
+
+mkdir -p "$(dirname "$CACHE")"
+
+ip=$(curl -4 --max-time 4 --silent https://icanhazip.com 2>/dev/null | tr -d '[:space:]')
+
+if [ -n "$ip" ]; then
+    echo "$ip" > "$CACHE"
+    echo "$ip"
+else
+    # Offline or timed out — show stale cache rather than a blank
+    [ -f "$CACHE" ] && cat "$CACHE" || echo '-'
+fi
