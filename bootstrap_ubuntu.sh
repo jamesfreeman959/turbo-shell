@@ -350,7 +350,22 @@ log "Deployed cheatsheets to ~/.local/share/cheatsheets/ (use 'helpme' to browse
 install -m 755 "$REPO_DIR/scripts/tmux-ip" "$LOCAL_BIN/tmux-ip"
 log "Deployed tmux-ip → $LOCAL_BIN/tmux-ip"
 
-# ── 9. git config ─────────────────────────────────────────────────────────────
+# ── 9. bat theme ─────────────────────────────────────────────────────────────
+header "bat theme"
+BAT_THEMES_DIR="$(bat --config-dir)/themes"
+TOKYO_THEME="$BAT_THEMES_DIR/tokyonight_night.tmTheme"
+if [[ ! -f "$TOKYO_THEME" ]]; then
+  mkdir -p "$BAT_THEMES_DIR"
+  log "Downloading Tokyo Night theme for bat..."
+  curl -fsSL "https://raw.githubusercontent.com/folke/tokyonight.nvim/main/extras/sublime/tokyonight_night.tmTheme" \
+    -o "$TOKYO_THEME"
+  bat cache --build
+  log "bat theme installed and cache rebuilt"
+else
+  info "bat Tokyo Night theme already installed"
+fi
+
+# ── 10. git config ─────────────────────────────────────────────────────────────
 header "git config"
 git config --global core.pager             delta
 git config --global interactive.diffFilter 'delta --color-only'
@@ -366,7 +381,7 @@ git config --global difftool.prompt        false
 git config --global alias.dft             'difftool --tool difftastic'
 log "Configured git (delta pager + difftastic tool)"
 
-# ── 10. zshrc plugin ─────────────────────────────────────────────────────────
+# ── 11. zshrc plugin ─────────────────────────────────────────────────────────
 header "~/.zshrc plugin"
 ZSHRC="$HOME/.zshrc"
 PLUGIN_DIR="$HOME/.zsh/plugins"
