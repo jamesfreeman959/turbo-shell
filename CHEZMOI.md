@@ -45,6 +45,7 @@ Only **config files** — the things in `configs/`. Not scripts, not package ins
 | `~/.config/atuin/config.toml` | ✅ Plain | Identical on all platforms |
 | `~/.config/ghostty/config` | ✅ Plain | Skipped automatically on Ubuntu Server |
 | `~/.config/tmuxinator/*.yml` | ✅ Plain | Identical on all platforms |
+| `~/.config/mc/ini` | ✅ Plain | Identical on all platforms |
 | `~/.config/nvim/lua/config/options.lua` | ✅ Plain | Our overlay — identical everywhere |
 | `~/.config/nvim/lua/config/keymaps.lua` | ✅ Plain | Our overlay — identical everywhere |
 | `~/.config/nvim/lua/plugins/extras.lua` | ✅ Plain | Our overlay — identical everywhere |

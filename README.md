@@ -53,6 +53,7 @@ You can also run a platform script directly if you want to skip auto-detection.
 | [NEW_TOOLS_CHEATSHEET.md](NEW_TOOLS_CHEATSHEET.md) | What replaces what and how to use each tool |
 | [TMUX_CHEATSHEET.md](TMUX_CHEATSHEET.md) | Full tmux key binding reference |
 | [NEOVIM_CHEATSHEET.md](NEOVIM_CHEATSHEET.md) | LazyVim key binding reference |
+| [MC_CHEATSHEET.md](MC_CHEATSHEET.md) | Midnight Commander reference, Mac laptop adapted |
 | [PLATFORMS.md](PLATFORMS.md) | Platform-specific notes (Ubuntu quirks, Bluefin/Wayland, etc.) |
 | [CHEZMOI.md](CHEZMOI.md) | Chezmoi integration and day-to-day sync workflow |
 

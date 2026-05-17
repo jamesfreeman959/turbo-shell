@@ -1,0 +1,5 @@
+[Midnight-Commander]
+# nc-classic: custom 256-colour skin faithful to Norton Commander.
+# Uses fixed 256-colour indices (16+) so it looks correct regardless of
+# the terminal theme's ANSI palette remapping (e.g. Tokyo Night).
+skin=nc-classic

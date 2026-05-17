@@ -66,6 +66,7 @@ BREW_PACKAGES=(
   lazygit
   btop
   tmuxinator
+  mc
 )
 
 for pkg in "${BREW_PACKAGES[@]}"; do
@@ -210,8 +211,16 @@ mkdir -p "$HOME/.local/share/cheatsheets"
 cp "$REPO_DIR/TMUX_CHEATSHEET.md"      "$HOME/.local/share/cheatsheets/tmux.md"
 cp "$REPO_DIR/NEOVIM_CHEATSHEET.md"    "$HOME/.local/share/cheatsheets/nvim.md"
 cp "$REPO_DIR/NEW_TOOLS_CHEATSHEET.md" "$HOME/.local/share/cheatsheets/tools.md"
+cp "$REPO_DIR/MC_CHEATSHEET.md"        "$HOME/.local/share/cheatsheets/mc.md"
 cp "$REPO_DIR/GETTING_STARTED.md"      "$HOME/.local/share/cheatsheets/start.md"
 log "Deployed cheatsheets to ~/.local/share/cheatsheets/ (use 'helpme' to browse)"
+
+# Midnight Commander
+mkdir -p "$HOME/.config/mc" "$HOME/.local/share/mc/skins"
+backup_if_exists "$HOME/.config/mc/ini"
+cp "$CONFIGS/mc/ini" "$HOME/.config/mc/ini"
+cp "$CONFIGS/mc/skins/nc-classic.ini" "$HOME/.local/share/mc/skins/nc-classic.ini"
+log "Deployed ~/.config/mc/ini and nc-classic skin"
 
 # tmux-ip helper — used by status bar to show primary IPv4
 mkdir -p "$HOME/.local/bin"

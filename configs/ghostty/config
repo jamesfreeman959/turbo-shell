@@ -18,9 +18,6 @@ font-feature = ss08
 # To find exact name: ghostty +list-themes | grep -i tokyo
 theme = tokyonight
 
-# Slight transparency — remove if you prefer fully opaque
-background-opacity = 0.95
-background-blur-radius = 20
 
 # ── Cursor ────────────────────────────────────────────────────────────────────
 cursor-style = bar

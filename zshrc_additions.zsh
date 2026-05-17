@@ -96,7 +96,10 @@ fi
 
 # ── bat — better cat ──────────────────────────────────────────────────────────
 if command -v bat >/dev/null 2>&1; then
-  export BAT_THEME="tokyonight_night"
+  # 'ansi' defers to the terminal's own colour palette rather than baking in
+  # background colours — avoids contrast issues when the theme doesn't match exactly.
+  # (tokyonight_night is still installed in bat's theme cache for delta to use.)
+  export BAT_THEME="ansi"
   alias cat='bat --paging=never'
   alias bp='bat --plain'
   # Use bat for man pages (colourised)
@@ -166,6 +169,22 @@ function helpme() {
     [[ -n "$chosen" ]] && glow -p "$CHEATSHEET_DIR/$chosen.md"
   fi
 }
+
+# ── tmux bell on long commands ───────────────────────────────────────────────
+# Rings the terminal bell when a command takes longer than _BELL_THRESHOLD
+# seconds. Inside tmux, this lights up the 🔔 on the window tab so you know
+# the command finished while you were in another window.
+_BELL_THRESHOLD=10
+_bell_cmd_start=0
+autoload -Uz add-zsh-hook
+function _bell_preexec() { _bell_cmd_start=$SECONDS }
+function _bell_precmd() {
+  local elapsed=$(( SECONDS - _bell_cmd_start ))
+  [[ $_bell_cmd_start -gt 0 && $elapsed -ge $_BELL_THRESHOLD ]] && print -n '\a'
+  _bell_cmd_start=0
+}
+add-zsh-hook preexec _bell_preexec
+add-zsh-hook precmd  _bell_precmd
 
 # ── tmuxinator shortcuts ──────────────────────────────────────────────────────
 alias mux='tmuxinator'

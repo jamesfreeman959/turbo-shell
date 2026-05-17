@@ -58,6 +58,18 @@ Templates live at `~/.config/tmuxinator/*.yml`.
 | `^a 0–9` | Go to window by number |
 | `Alt+1–5` | Go to window 1–5 (no prefix needed) |
 
+### Bell notifications
+
+A `🔔` appears on a window's tab when that window needs your attention. This works like Ghostty's bell indicator but inside tmux.
+
+**How it fires:** the zsh hook in `zshrc_additions.zsh` sends a bell automatically when any command takes **10 seconds or longer** to complete. Switch to another window while something is running — the `🔔` appears on the tab when it finishes. The threshold is controlled by `_BELL_THRESHOLD` in that file.
+
+**What it doesn't do:** it cannot indicate that a program is blocked mid-run waiting for you to press something — tmux has no visibility into whether a process is blocked on stdin. It fires on command *exit*, not on input prompts within a command.
+
+**Other sources:** any program that explicitly sends a terminal bell (`\a`) will also trigger it — some test runners, build tools, and `watch` do this natively.
+
+**Clearing it:** the `🔔` disappears automatically when you switch back to that window.
+
 ## Panes (splits)
 
 | Keys | Action |
