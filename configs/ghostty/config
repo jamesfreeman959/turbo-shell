@@ -32,8 +32,9 @@ macos-titlebar-style = tabs
 # ── Behaviour ─────────────────────────────────────────────────────────────────
 # needed for Alt keybindings in nvim/tmux
 macos-option-as-alt = true
-# explicit copy only
-copy-on-select = false
+copy-on-select = true
+clipboard-trim-trailing-spaces = true
+mouse-hide-while-typing = true
 # no "are you sure?" on close
 confirm-close-surface = false
 
@@ -49,4 +50,4 @@ term = xterm-256color
 # ── Keybindings ───────────────────────────────────────────────────────────────
 # New tab inherits cwd
 keybind = cmd+t=new_tab
-keybind = cmd+shift+t=new_tab
+keybind = cmd+shift+t=undo_close_surface
