@@ -12,14 +12,21 @@ CONFIGS="$REPO_DIR/configs"
 BACKUP_DIR="$HOME/.config_backup_$(date +%Y%m%d_%H%M%S)"
 LOCAL_BIN="$HOME/.local/bin"
 
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-BLUE='\033[0;34m'; BOLD='\033[1m'; NC='\033[0m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+BOLD='\033[1m'
+NC='\033[0m'
 
-log()    { echo -e "${GREEN}▶${NC} $1"; }
-warn()   { echo -e "${YELLOW}⚠${NC}  $1"; }
-info()   { echo -e "${BLUE}ℹ${NC}  $1"; }
+log() { echo -e "${GREEN}▶${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠${NC}  $1"; }
+info() { echo -e "${BLUE}ℹ${NC}  $1"; }
 header() { echo -e "\n${BOLD}── $1 ──${NC}"; }
-die()    { echo -e "${RED}✗${NC} $1" >&2; exit 1; }
+die() {
+  echo -e "${RED}✗${NC} $1" >&2
+  exit 1
+}
 
 backup_if_exists() {
   if [[ -e "$1" ]]; then
@@ -32,9 +39,17 @@ backup_if_exists() {
 # Detect architecture — used throughout for binary downloads
 ARCH=$(uname -m)
 case "$ARCH" in
-  x86_64)  ARCH_DEB="amd64"; ARCH_GO="amd64";  ARCH_MUSL="x86_64"  ;;
-  aarch64) ARCH_DEB="arm64"; ARCH_GO="arm64";   ARCH_MUSL="aarch64" ;;
-  *) die "Unsupported architecture: $ARCH" ;;
+x86_64)
+  ARCH_DEB="amd64"
+  ARCH_GO="amd64"
+  ARCH_MUSL="x86_64"
+  ;;
+aarch64)
+  ARCH_DEB="arm64"
+  ARCH_GO="arm64"
+  ARCH_MUSL="aarch64"
+  ;;
+*) die "Unsupported architecture: $ARCH" ;;
 esac
 
 # Download the latest GitHub release asset matching a pattern, install to LOCAL_BIN
@@ -48,13 +63,16 @@ gh_install() {
   log "Installing $binary_name from $repo..."
 
   local url
-  url=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" \
-    | grep "browser_download_url" \
-    | grep "$pattern" \
-    | head -1 \
-    | sed 's/.*"browser_download_url": "\(.*\)"/\1/')
+  url=$(curl -s "https://api.github.com/repos/${repo}/releases/latest" |
+    grep "browser_download_url" |
+    grep "$pattern" |
+    head -1 |
+    sed 's/.*"browser_download_url": "\(.*\)"/\1/')
 
-  [[ -z "$url" ]] && { warn "No release found for $repo ($pattern) — skipping"; return 1; }
+  [[ -z "$url" ]] && {
+    warn "No release found for $repo ($pattern) — skipping"
+    return 1
+  }
 
   local tmpdir
   tmpdir=$(mktemp -d)
@@ -74,7 +92,7 @@ gh_install() {
   local src
   src=$(find "$tmpdir" -name "$binary_name" -type f 2>/dev/null | head -1)
   [[ -z "$src" ]] && src=$(find "$tmpdir" -maxdepth 2 -type f -perm /111 ! -name "*.sh" | head -1)
-  [[ -z "$src" ]] && src="$tmpdir/asset"  # raw binary fallback
+  [[ -z "$src" ]] && src="$tmpdir/asset" # raw binary fallback
 
   install -m 755 "$src" "$LOCAL_BIN/$binary_name"
   log "Installed $binary_name → $LOCAL_BIN/$binary_name"
@@ -134,10 +152,10 @@ if command -v snap >/dev/null 2>&1; then
 else
   warn "snapd not available — installing Neovim via tarball"
   NVIM_ASSET="nvim-linux-${ARCH}.tar.gz"
-  NVIM_URL=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" \
-    | grep "browser_download_url.*${NVIM_ASSET}" \
-    | head -1 \
-    | sed 's/.*"browser_download_url": "\(.*\)"/\1/')
+  NVIM_URL=$(curl -s "https://api.github.com/repos/neovim/neovim/releases/latest" |
+    grep "browser_download_url.*${NVIM_ASSET}" |
+    head -1 |
+    sed 's/.*"browser_download_url": "\(.*\)"/\1/')
   curl -sL "$NVIM_URL" | tar -xz -C /tmp
   rm -rf ~/.local/nvim
   mv "/tmp/nvim-linux-${ARCH}" ~/.local/nvim
@@ -148,10 +166,10 @@ fi
 # ── 2. lsd ────────────────────────────────────────────────────────────────────
 header "lsd"
 if ! command -v lsd >/dev/null 2>&1; then
-  LSD_URL=$(curl -s "https://api.github.com/repos/lsd-rs/lsd/releases/latest" \
-    | grep "browser_download_url.*_${ARCH_DEB}\.deb" \
-    | head -1 \
-    | sed 's/.*"browser_download_url": "\(.*\)"/\1/')
+  LSD_URL=$(curl -s "https://api.github.com/repos/lsd-rs/lsd/releases/latest" |
+    grep "browser_download_url.*_${ARCH_DEB}\.deb" |
+    head -1 |
+    sed 's/.*"browser_download_url": "\(.*\)"/\1/')
   if [[ -n "$LSD_URL" ]]; then
     tmpfile=$(mktemp /tmp/lsd.XXXXXX.deb)
     curl -sL "$LSD_URL" -o "$tmpfile"
@@ -168,10 +186,10 @@ fi
 # ── glow — terminal markdown viewer ──────────────────────────────────────────
 header "glow"
 if ! command -v glow >/dev/null 2>&1; then
-  GLOW_URL=$(curl -s "https://api.github.com/repos/charmbracelet/glow/releases/latest" \
-    | grep "browser_download_url.*_${ARCH_DEB}\.deb" \
-    | head -1 \
-    | sed 's/.*"browser_download_url": "\(.*\)"/\1/')
+  GLOW_URL=$(curl -s "https://api.github.com/repos/charmbracelet/glow/releases/latest" |
+    grep "browser_download_url.*_${ARCH_DEB}\.deb" |
+    head -1 |
+    sed 's/.*"browser_download_url": "\(.*\)"/\1/')
   if [[ -n "$GLOW_URL" ]]; then
     tmpfile=$(mktemp /tmp/glow.XXXXXX.deb)
     curl -sL "$GLOW_URL" -o "$tmpfile"
@@ -204,8 +222,8 @@ fi
 
 if ! command -v zoxide >/dev/null 2>&1; then
   log "Installing zoxide..."
-  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh \
-    | sh -s -- --bin-dir "$LOCAL_BIN"
+  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh |
+    sh -s -- --bin-dir "$LOCAL_BIN"
 else
   info "zoxide already installed"
 fi
@@ -302,8 +320,8 @@ cp "$CONFIGS/tmux/tmux.conf.local" "$HOME/.tmux.conf.local"
 sed -i "s/@extrakto_clip_tool 'pbcopy'/@extrakto_clip_tool 'tmux'/" "$HOME/.tmux.conf.local"
 log "Deployed ~/.tmux.conf.local (clipboard: tmux buffer)"
 if tmux info &>/dev/null 2>&1; then
-  tmux source-file "$HOME/.tmux.conf" 2>/dev/null && log "Reloaded tmux config into running server" \
-    || warn "Could not reload tmux config — start a new session to pick it up"
+  tmux source-file "$HOME/.tmux.conf" 2>/dev/null && log "Reloaded tmux config into running server" ||
+    warn "Could not reload tmux config — start a new session to pick it up"
 fi
 
 # Neovim
@@ -311,14 +329,17 @@ if [[ -d "$HOME/.config/nvim" ]]; then
   backup_if_exists "$HOME/.config/nvim"
   rm -rf "$HOME/.config/nvim"
 fi
-[[ -d "$HOME/.local/share/nvim" ]] && { backup_if_exists "$HOME/.local/share/nvim"; rm -rf "$HOME/.local/share/nvim"; }
+[[ -d "$HOME/.local/share/nvim" ]] && {
+  backup_if_exists "$HOME/.local/share/nvim"
+  rm -rf "$HOME/.local/share/nvim"
+}
 git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
 rm -rf "$HOME/.config/nvim/.git"
-cp "$CONFIGS/nvim/lua/config/options.lua"  "$HOME/.config/nvim/lua/config/options.lua"
-cp "$CONFIGS/nvim/lua/config/keymaps.lua"  "$HOME/.config/nvim/lua/config/keymaps.lua"
+cp "$CONFIGS/nvim/lua/config/options.lua" "$HOME/.config/nvim/lua/config/options.lua"
+cp "$CONFIGS/nvim/lua/config/keymaps.lua" "$HOME/.config/nvim/lua/config/keymaps.lua"
 mkdir -p "$HOME/.config/nvim/lua/plugins"
-cp "$CONFIGS/nvim/lua/plugins/extras.lua"  "$HOME/.config/nvim/lua/plugins/extras.lua"
-cp "$CONFIGS/nvim/lua/plugins/lang.lua"    "$HOME/.config/nvim/lua/plugins/lang.lua"
+cp "$CONFIGS/nvim/lua/plugins/extras.lua" "$HOME/.config/nvim/lua/plugins/extras.lua"
+cp "$CONFIGS/nvim/lua/plugins/lang.lua" "$HOME/.config/nvim/lua/plugins/lang.lua"
 rm -f "$HOME/.config/nvim/lua/plugins/example.lua"
 log "Deployed LazyVim config"
 
@@ -336,16 +357,16 @@ log "Deployed ~/.config/atuin/config.toml"
 # tmuxinator
 mkdir -p "$HOME/.config/tmuxinator"
 cp "$CONFIGS/tmuxinator/main.yml" "$HOME/.config/tmuxinator/main.yml"
-cp "$CONFIGS/tmuxinator/llm.yml"  "$HOME/.config/tmuxinator/llm.yml"
+cp "$CONFIGS/tmuxinator/llm.yml" "$HOME/.config/tmuxinator/llm.yml"
 log "Deployed tmuxinator templates"
 
 # Cheatsheets — available via 'helpme' command
 mkdir -p "$HOME/.local/share/cheatsheets"
-cp "$REPO_DIR/TMUX_CHEATSHEET.md"      "$HOME/.local/share/cheatsheets/tmux.md"
-cp "$REPO_DIR/NEOVIM_CHEATSHEET.md"    "$HOME/.local/share/cheatsheets/nvim.md"
+cp "$REPO_DIR/TMUX_CHEATSHEET.md" "$HOME/.local/share/cheatsheets/tmux.md"
+cp "$REPO_DIR/NEOVIM_CHEATSHEET.md" "$HOME/.local/share/cheatsheets/nvim.md"
 cp "$REPO_DIR/NEW_TOOLS_CHEATSHEET.md" "$HOME/.local/share/cheatsheets/tools.md"
-cp "$REPO_DIR/MC_CHEATSHEET.md"        "$HOME/.local/share/cheatsheets/mc.md"
-cp "$REPO_DIR/GETTING_STARTED.md"      "$HOME/.local/share/cheatsheets/start.md"
+cp "$REPO_DIR/MC_CHEATSHEET.md" "$HOME/.local/share/cheatsheets/mc.md"
+cp "$REPO_DIR/GETTING_STARTED.md" "$HOME/.local/share/cheatsheets/start.md"
 log "Deployed cheatsheets to ~/.local/share/cheatsheets/ (use 'helpme' to browse)"
 
 # Midnight Commander
@@ -376,18 +397,18 @@ fi
 
 # ── 10. git config ─────────────────────────────────────────────────────────────
 header "git config"
-git config --global core.pager             delta
+git config --global core.pager delta
 git config --global interactive.diffFilter 'delta --color-only'
-git config --global delta.navigate         true
-git config --global delta.side-by-side     true
-git config --global delta.line-numbers     true
-git config --global delta.light            false
-git config --global delta.syntax-theme     "tokyonight_night"
-git config --global merge.conflictstyle    diff3
-git config --global diff.colorMoved        default
+git config --global delta.navigate true
+git config --global delta.side-by-side true
+git config --global delta.line-numbers true
+git config --global delta.light false
+git config --global delta.syntax-theme "tokyonight_night"
+git config --global merge.conflictstyle diff3
+git config --global diff.colorMoved default
 git config --global difftool.difftastic.cmd 'difft "$LOCAL" "$REMOTE"'
-git config --global difftool.prompt        false
-git config --global alias.dft             'difftool --tool difftastic'
+git config --global difftool.prompt false
+git config --global alias.dft 'difftool --tool difftastic'
 log "Configured git (delta pager + difftastic tool)"
 
 # ── 11. zshrc plugin ─────────────────────────────────────────────────────────
@@ -407,7 +428,7 @@ else
   printf '\n%s\n%s\n%s\n' \
     "$MARKER" \
     '[[ -f "$HOME/.zsh/plugins/turbo-shell.plugin.zsh" ]] && source "$HOME/.zsh/plugins/turbo-shell.plugin.zsh"' \
-    "# <<< turbo-shell additions >>>" >> "$ZSHRC"
+    "# <<< turbo-shell additions >>>" >>"$ZSHRC"
   log "Added plugin source line to ~/.zshrc"
 fi
 
@@ -423,5 +444,6 @@ echo "  3. Run 'nvim' — LazyVim installs plugins on first launch"
 echo "     Then run :Mason and press U to install language servers"
 echo "  4. Set atuin server URL: ~/.config/atuin/config.toml"
 echo "     Then: atuin import auto && atuin register -u USER -e EMAIL"
+echo "     Or if registered: atuin login -u <username> -p <password> -k <encryption-key>"
 echo ""
 [[ -d "$BACKUP_DIR" ]] && echo -e "${BLUE}Backups: $BACKUP_DIR${NC}"

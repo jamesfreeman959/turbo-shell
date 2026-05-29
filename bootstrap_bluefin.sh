@@ -317,5 +317,6 @@ echo "     oh-my-tmux changes prefix to Ctrl+a — press Ctrl+a then capital I t
 echo "  4. Run 'nvim' → LazyVim installs plugins on first launch → :Mason then U"
 echo "  5. Set atuin server URL: ~/.config/atuin/config.toml"
 echo "     Then: atuin import auto && atuin register -u USER -e EMAIL"
+echo "     Or is already registered: atuin login -u <username> -p <password> -k <encryption-key>"
 echo ""
 [[ -d "$BACKUP_DIR" ]] && echo -e "${BLUE}Backups: $BACKUP_DIR${NC}"

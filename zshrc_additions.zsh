@@ -52,6 +52,7 @@ if command -v atuin >/dev/null 2>&1; then
   eval "$(atuin init zsh --disable-up-arrow)"
   # --disable-up-arrow: up-arrow still does normal zsh history search.
   # ctrl+r opens atuin's full search UI across all machines.
+  eval "$(atuin gen-completions --shell zsh)"
 fi
 
 # ── zoxide — smarter cd ───────────────────────────────────────────────────────
