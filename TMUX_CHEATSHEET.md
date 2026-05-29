@@ -4,6 +4,37 @@
 
 ---
 
+## Mental model
+
+tmux has three levels of hierarchy:
+
+```
+Server
+└── Sessions  (persistent workspaces — survive detach/logout)
+    └── Windows  (tabs — each fills the full screen)
+        └── Panes  (splits within a window)
+```
+
+- **Session** — a container that keeps running even after you disconnect. You `attach` to resume it and `detach` to leave without killing it. Typically one session per project.
+- **Window** — like a browser tab inside a session. Switch between them with `^a n/p` or by number. Each window is independent — no relation to other windows' pane layouts.
+- **Pane** — a split region inside a window. Split a window into as many panes as you like; they all share the same window.
+
+### sesh quick start
+
+**sesh** is the session manager bound to `^a T`. It gives you a fuzzy-search list of existing sessions and common directories so you can jump to or create sessions in one step.
+
+| What you want to do | How |
+|---|---|
+| Open/switch session | `^a T`, type to filter, `Enter` to switch (or create if it's a directory) |
+| Create a session in a new directory | `^a T`, type the path or project name, `Enter` |
+| Detach (leave session running) | `^a d` |
+| See all sessions | `^a s` — arrow keys to navigate |
+| Kill a session you no longer want | `^a s`, highlight the session, press `x`, confirm `y` |
+| Kill a session by name from the shell | `tmux kill-session -t name` |
+| Kill the current session and switch away | `tmux kill-session` (attaches to another session if one exists) |
+
+---
+
 ## Sessions
 
 | Keys | Action |

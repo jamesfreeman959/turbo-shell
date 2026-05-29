@@ -192,3 +192,9 @@ alias mux='tmuxinator'
 alias muxs='tmuxinator start'
 alias muxe='tmuxinator edit'
 alias muxl='tmuxinator list'
+
+export EDITOR=nvim
+alias vi='nvim'
+alias cd='z'
+alias diff='difft'
+
