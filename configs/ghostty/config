@@ -50,4 +50,3 @@ term = xterm-256color
 # ── Keybindings ───────────────────────────────────────────────────────────────
 # New tab inherits cwd
 keybind = cmd+t=new_tab
-keybind = cmd+shift+t=undo_close_surface
