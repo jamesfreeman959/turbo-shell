@@ -49,7 +49,7 @@ function ssh() {
 # ── atuin — better shell history (replaces ctrl+r) ───────────────────────────
 # Self-hosted sync: configure server URL in ~/.config/atuin/config.toml first.
 if command -v atuin >/dev/null 2>&1; then
-  export ATUIN_SYNC_ADDRESS=REDACTED
+  # export ATUIN_SYNC_ADDRESS=https://your-atuin-server.example.com
   eval "$(atuin init zsh --disable-up-arrow)"
   # --disable-up-arrow: up-arrow still does normal zsh history search.
   # ctrl+r opens atuin's full search UI across all machines.
